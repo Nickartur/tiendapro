@@ -26,3 +26,4 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    # Si no esta esto no se van a pintar las imagenes de los notebooks, entre otros.
