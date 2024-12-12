@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from tiendapp.models import Product, ProductCategory
 
 
@@ -20,16 +20,28 @@ def v_cart(request):
 
 def v_product_detail(request, code):
     product_obj = Product.objects.get(sku = code)
-    # Obtejer las categorias del producto
-    categories_obj = ProductCategory.objects.filter(product = product_obj) # lista de categorias
-    # De las categorias obtenidas
-    # Filtrar los productos relacionados
-    pc_obj = ProductCategory.objects.filter(category__in = categories_obj)
-    extras = []
-    for pc in pc_obj:
-        extras.append(pc.product)
+ 
+    rels = ProductCategory.objects.filter(product = product_obj)
+ 
+    # rels_ids, guarda los ids categoria del producto
+    rels_ids = [rr.category.id for rr in rels]
+    sug = ProductCategory.objects.filter(
+        category__in = rels_ids).exclude(product = product_obj)
+
+    # sug, posee a las sugerencias, pero necesito los ids de los productos
+    sug_ids = [ss.product.id for ss in sug]
+
+    extras = Product.objects.filter(id__in = sug_ids)
+ 
     context = {
-        'product': product_obj,
+        "product": product_obj,
         "extras": extras
     }
-    return render(request, "tiendapp/product_detail.html", context)
+    return render(request, 
+                  "tiendapp/product_detail.html",
+                  context) 
+
+def v_add_to_cart(request, code):
+    # algoritmos nuevos
+    # procesar
+    return redirect("/cart")
