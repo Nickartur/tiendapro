@@ -41,7 +41,7 @@ def v_product_detail(request, code):
                   "tiendapp/product_detail.html",
                   context) 
 
-def v_add_to_cart(request, code):
+def v_add_to_cart(request, code): # porque en urls se agrega el <code>, aca tambien pero sin el <>
     # algoritmos nuevos
     # procesar
     return redirect("/cart")

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Product(models.Model):
@@ -24,8 +25,38 @@ class Category(models.Model):
         return self.name
     
 class ProductCategory(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT) # PROTECT, default = 1 esto es en caso no estuviese el registro
+    # Es decir, antes no estaba, fue migrado antes de estar creado
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
 
     def __str__(self):
         return self.category.name + " > " + self.product.name
+    
+class Customer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.PROTECT)
+    billing_address = models.TextField()
+    shipping_address = models.TextField()
+    phone = models.CharField(max_length=64)
+    
+    def __str__(self):
+        return self.user.username + " Telefono: " + self.phone
+    
+class Order(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    shipping_address = models.TextField()
+    order_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=32) # PENDIENTE # PAGADO
+    
+    def __str__(self):
+        return self.customer.user.username + " Estado Orden: " + self.status
+    
+class OrderDetail(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.PROTECT) # Se podria poner CASCADE, pero eliminaria todo de un tiron
+    # con PROTECT se tendría que ir desde abajo hasta arriba borrando
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    price = models.DecimalField(decimal_places=2, max_digits=6) #9999.12
+    quantity = models.DecimalField(decimal_places=2, max_digits=6) # 9999.12
+    
+    def __str__(self):
+        return self.order.id + " " + self.product.name
+    
