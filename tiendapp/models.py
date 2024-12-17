@@ -49,7 +49,7 @@ class Customer(models.Model):
         return self.user.username + " Telefono: " + self.phone
 # Se agrega esto desde las pruebas realizadas, aunque en vez de nuevo_customer se pone =self
     def get_current_order(self):
-        nueva_order = Order.objects.filter(customer=self).first()
+        nueva_order = Order.objects.filter(customer=self, status = "PENDIENTE").first()
         # Si nueva_order NO es None, lo retornamos
         if nueva_order is None:
             # Si nueva_order is None, lo creamos
@@ -58,6 +58,7 @@ class Customer(models.Model):
             nueva_order.shipping_address = self.shipping_address
             nueva_order.status = "PENDIENTE"
             nueva_order.save()
+        return nueva_order
     
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)

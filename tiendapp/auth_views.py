@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib import messages
 from tiendapp.models import Customer
 
 def v_sign_up(request):
@@ -13,6 +14,7 @@ def v_sign_up_create(request):
         print("Creando un cliente: ") # Con todo lo siguiente se crea un usuario
         nuevo_user = User.objects.filter(username = data["email"]).first()
         if nuevo_user is not None:
+            messages.error(request, "El email ya esta registrado en la pagina. ")
             # Incluir mensaje de "Tu cuenta ya existe"
             print("Email ingresado a existe")
             return redirect("/sign_up")
@@ -36,7 +38,8 @@ def v_sign_up_create(request):
             nuevo_customer.shipping_address = "Av. Libertad 3434. Concepción."
             nuevo_customer.phone = data["phone"]
             nuevo_customer.save()
-            
+            #### Notificar la creacion de la cuenta
+            messages.success(request, "La cuenta se creo satisfactoriamente.")
             return redirect("/sign_in")
     return redirect("/")
 
@@ -52,9 +55,15 @@ def v_sign_in(request): # Preparando funcion para el login
         
         if usuario_valido is not None:
             login(request, usuario_valido)
+            messages.success(request, "La sesión se inicio correctamente.")
             return redirect ("/") # Lleva a la pantalla principal
         else:
-            pass
+            messages.error(request, "Tu usuario o contraseña no coinciden, intenta nuevamente.")
+            #pass
                 ## Incluir mensaje de error
     return render(request, "tiendapp/sign_in.html")
 
+def v_sign_out(request):
+    from django.contrib.auth import logout
+    logout(request) # Cierra la sesión
+    return redirect("/")
