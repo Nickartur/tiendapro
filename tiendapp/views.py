@@ -17,8 +17,13 @@ def v_index(request):
 
 
 def v_cart(request):
+    customer_obj = Customer.objects.get(user = request.user)
+    order_current = customer_obj.get_current_order() # almacena objeto tipo order
+    details = OrderDetail.objects.filter(order = order_current)
+    
     context = {
-        "items": [None, None, None, None, None]
+        #"items": [None, None, None, None, None]
+        "items": details
     }
     return render(request, "tiendapp/cart.html", context)
 
@@ -49,6 +54,8 @@ def v_product_detail(request, code):
 
 # porque en urls se agrega el <code>, aca tambien pero sin el <>
 def v_add_to_cart(request, code):
+    if not request.user.is_authenticated:
+        return redirect("/sign_in")
     # algoritmos nuevos
     # procesar
     product_obj = Product.objects.get(sku=code)
@@ -73,4 +80,18 @@ def v_add_to_cart(request, code):
         detail_obj.price = product_obj.price
         detail_obj.save()
 
+    return redirect("/cart")
+
+def v_remove_from_cart(request, code):
+    # eliminar
+    product_obj = Product.objects.get(sku = code)
+    customer_obj = Customer.objects.get(user = request.user)
+    current_order = customer_obj.get_current_order()
+    item_cart = OrderDetail.objects.filter(
+        order = current_order,
+        product = product_obj
+    ).first()
+    if item_cart is not None:
+        item_cart.delete()
+        
     return redirect("/cart")
