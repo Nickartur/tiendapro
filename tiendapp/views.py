@@ -19,7 +19,7 @@ def v_index(request):
 def v_cart(request):
     customer_obj = Customer.objects.get(user = request.user)
     order_current = customer_obj.get_current_order() # almacena objeto tipo order
-    details = OrderDetail.objects.filter(order = order_current)
+    details = OrderDetail.objects.filter(order = order_current) # es de estile QuerySet?
     
     context = {
         #"items": [None, None, None, None, None]
@@ -95,3 +95,15 @@ def v_remove_from_cart(request, code):
         item_cart.delete()
         
     return redirect("/cart")
+
+def v_checkout(request):
+    customer = Customer.objects.get(user = request.user) # Esta linea me trae al usuario en curso
+    current_order = customer.get_current_order() # La programamos nosotros, esta en models
+    details = OrderDetail.objects.filter(order = current_order) # Los productos componen esa orden
+    
+    context = {
+        "items": details,
+        "total_order": 121212,
+        "customer": customer
+    }
+    return render(request, "tiendapp/checkout.html", context)

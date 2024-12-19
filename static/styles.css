@@ -21,3 +21,18 @@ body {
 .card a img {
     width: 100%;
 }
+
+.bg-darkblue {background-color: #213555;}
+.bg-light {background-color: #3E5879;}
+.bg-beige {background-color: #D8C4B6;}
+.bg-smokebeige {background-color: #F5EFE7;}
+
+.bg-dark-i {background-color: #213555!important;}
+.bg-light-i {background-color: #3E5879!important;}
+.bg-beige-i {background-color: #D8C4B6!important;}
+.bg-smokebeige-i {background-color: #F5EFE7!important;}
+
+.text-dark {color: #213555;}
+.text-light {color: #3E5879;}
+.text-beige {color: #D8C4B6;}
+.text-smokebeige {color: #F5EFE7;}
